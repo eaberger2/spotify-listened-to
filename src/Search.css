@@ -1,0 +1,56 @@
+.search{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.input-element{
+    border: 1px solid #1DB954;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    padding: 10px;
+    height: 30px;
+    font-size: 15pt;
+}
+
+.search-button{
+    width: 150px;
+    height: 30px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    font-weight: 700;
+    color: white;
+    background: #1DB954;
+    border: none;
+    outline: none;
+    padding: 5px;
+}
+
+.search-wrap{
+    align-items: center;
+    padding: 10px;
+    align-content: center;
+    line-height: 1.5;
+    display: inline-block;
+}
+
+@font-face{
+    font-family: 'Gotham';
+    src: url('../public/fonts/Gotham-Spotify-Font/Gotham-Bold.otf'), url('../public/fonts/Gotham-Spotify-Font/GothamLight.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.retrieve{
+    font-family: 'Gotham';
+    font-size: 20px;
+    padding: 5pt;
+    font-weight: 100;
+    color: #272838;
+    text-transform: lowercase;
+    position: relative;
+}

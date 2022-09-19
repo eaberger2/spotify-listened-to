@@ -1,36 +1,48 @@
 import axios from "axios";
-import React, {useState, useEffect} from "react";
-export default function Dashboard({token}) {
-    
-    const [playlist_id, setPlaylistId] = useState([]);
-    const [href, setHref] = useState([]);
-    const [playlists, setPlaylists] = useState([]);
-    const [isMounted, setIsMounted] = useState(false);
+import React, { useState, useEffect, Component } from "react";
+import "./Dashboard.css";
 
-    useEffect(() => {
-        const getTracks = async (token) =>{
-        const {tracks} = await axios.get("https://api.spotify.com/v1/playlists/4FteCV6SQS8yKc6pzFlZnv/tracks", {
-            headers: {
-                Authorization: 'Bearer '+token
-            },
-            params: {
-                market: "US",
-                limit: 50,
-                offset: 0
-            }
-            })
-            console.log({tracks})
-        }
-       
-        setIsMounted(true);
-        //getPlaylists(token);
-        getTracks(token);
-    }, [])
+export default function Dashboard({ songs }) {
+    const [photos, setPhotos] = useState();
+    const [songNames, setSongNames] = useState();
 
-    if(isMounted)
-    return(
-        <div className="Dashboard">
-            <h1>Hello</h1>
-        </div>
+    var heading = ['Album Cover', 'Song']
+    var body = songs;
+    console.log({body});
+    const column = Object.keys(body[0]);
+    console.log({column});
+
+    const ThData = () =>{
+        return heading.map((data)=>{
+            return <th key={data}>{data}</th>
+        })
+    }
+
+    const tdData = () => {
+        return body.map((data)=>{
+            return(
+                <tr key={data.index}>
+                    <td className="dash-cell-left"><img src={data.albumCover} width="90" height="90"></img></td>
+                    <td className="dash-cell-right">{data.trackName}</td>
+                </tr>
+            )
+        })
+    }
+
+    //useEffect(() => {
+        //getPhoto(token);
+    //}, [])
+
+    return (
+        <table className="dashboard">
+            <thead className="dash-heading">
+                <tr>{ThData()}</tr>
+            </thead>
+            <tbody>
+                {tdData()}
+            </tbody>
+        </table>
     )
 };
+
+

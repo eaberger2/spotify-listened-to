@@ -1,0 +1,49 @@
+@import url('https://sp-bootstrap.spotifycdn.com/8.12.5/fonts/circular-cyr-book.woff2');
+
+@font-face{
+    font-family: 'Gotham';
+    src: url('../public/fonts/Gotham-Spotify-Font/Gotham-Bold.otf'), url('../public/fonts/Gotham-Spotify-Font/GothamLight.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.dashboard{
+    font-family: 'Gotham';
+}
+
+.dash-heading{
+    font-size: 100%;
+    padding: 5pt;
+    color: #272838;
+}
+
+th{
+    padding: 10pt;
+}
+
+.dash-body{
+    padding: 5pt;
+}
+
+.dash-light-row{
+    background-color: #8C8270;
+}
+
+.dash-cell-right{
+    padding-right: 20pt;
+    font-size: 80%;
+    color: #272838;
+}
+.dash-cell-center{
+    padding-left:5pt;
+    padding-right:5pt;
+    font-size: 80%;
+    color: #272838;
+}
+.dash-cell-left{
+    padding-left: 20pt;
+    padding-top: 5pt;
+    padding-bottom:5pt;
+    font-size: 80%;
+    color: #272838;
+}
