@@ -23,7 +23,7 @@ export default function Search({ token }) {
                 Authorization: 'Bearer ' + token
             }
         }).catch(err => {
-            if(err.message.includes('401')){
+            if(err.message.includes('401') || err.message.includes('400')){
                 logout()
             }
         });
@@ -32,6 +32,7 @@ export default function Search({ token }) {
 
     const changeHandler = async (event) => {
         const inputArtist = event.target.value;
+        setTriggerUseEffect(p => p + 1);
         setArtist(inputArtist);
     }
 
@@ -156,7 +157,7 @@ export default function Search({ token }) {
                     offset: set
                 }
             }).catch(err => {
-                if(err.message.includes('401')){
+                if(err.message.includes('401') || err.message.includes('400')){
                     logout()
                 }
             });
@@ -183,7 +184,7 @@ export default function Search({ token }) {
                         offset: set
                     }
                 }).catch(err => {
-                    if(err.message.includes('401')){
+                    if(err.message.includes('401') || err.message.includes('400')){
                         logout()
                     }
                 });
