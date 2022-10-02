@@ -13,6 +13,7 @@ export default function Search({ token }) {
     const [triggerUseEffect, setTriggerUseEffect] = useState(0);
     const [artist, setArtist] = useState("");
     const [songList, setSongList] = useState();
+    const [logoutRequest, setLogoutRequest] = useState(false);
 
 
     let displayName = "";
@@ -38,15 +39,14 @@ export default function Search({ token }) {
 
     function submitHandler(e) {
         e.preventDefault();
+        setSongList(null);
         setSubmit(true);
         if (artist.length > 0)
             fetchSongs(token);
     }
 
     const logout = () => {
-        App.setToken("")
-        window.localStorage.removeItem("token")
-        window.history.replace()
+        setLogoutRequest(true);
       }
 
     const fetchSongs = async (token) => {
@@ -74,7 +74,7 @@ export default function Search({ token }) {
             for (let i = 0; i < songs.items.length; i++) {
                 if (songs.items[i].track != null) {
                     for (let j = 0; j < songs.items[i].track.artists.length; j++) {
-                        if (artist == songs.items[i].track.artists[j].name && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
+                        if (artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
                             const song = {id: songs.items[i].track.external_ids.isrc,
                                 trackName: songs.items[i].track.name,
                                 albumCover: songs.items[i].track.album.images[1].url,
@@ -108,7 +108,7 @@ export default function Search({ token }) {
                 for (let i = 0; i < songs.items.length; i++) {
                     if (songs.items[i].track != null) {
                         for (let j = 0; j < songs.items[i].track.artists.length; j++) {
-                            if (artist == songs.items[i].track.artists[j].name && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
+                            if (artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
                                 const song = {id: songs.items[i].track.external_ids.isrc,
                                     trackName: songs.items[i].track.name,
                                     albumCover: songs.items[i].track.album.images[1],
@@ -120,6 +120,8 @@ export default function Search({ token }) {
                         }
                     }
                 }
+
+
                 if (songs.items.length < 50) {
                     repeat = false;
                 }
@@ -145,7 +147,6 @@ export default function Search({ token }) {
 
         const getPlaylists = async (token) => {
             var playlistsArr = [];
-            //var playlistIndex = 0;
             var set = 0;
 
             const { data } = await axios.get("https://api.spotify.com/v1/me/playlists", {
@@ -214,8 +215,10 @@ export default function Search({ token }) {
 
     return (
         <div className="search">
-            <form onSubmit={submitHandler}>
-                <div className="search-wrap">
+            {logoutRequest && (
+                <h2 className="logout">Your token has expired, please logout and re-login.</h2>
+            )}
+            <form onSubmit={submitHandler} className="search-wrap">
                     <input
                     value={artist}
                     placeholder={"Search Artist"}
@@ -223,16 +226,15 @@ export default function Search({ token }) {
                     onChange={changeHandler}
                     />
                     <button type={"submit"} className="search-button">Submit</button>
-                </div>
             </form>
-            {!songList && submit && (
+            {!songList && submit && !logoutRequest && (
                 <h2 className="retrieve">Retrieving data...</h2>
             )}
             {songList && songList.length != 0 &&(
                 <Dashboard token={token} songs={songList} />
             )}
             {songList && songList.length == 0 &&(
-                <h2 className="retrieve">No songs found by this artist</h2>
+                <h2 className="logout">No songs found by this artist.</h2>
             )}
         </div>
     );
