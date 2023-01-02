@@ -4,6 +4,10 @@ import React, { useState, useEffect, Component } from "react";
 import App from "./App.js";
 import Dashboard from './Dashboard.js';
 import './Search.css';
+import {Input, Space} from 'antd';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 export default function Search({ token }) {
 
@@ -14,6 +18,7 @@ export default function Search({ token }) {
     const [artist, setArtist] = useState("");
     const [songList, setSongList] = useState();
     const [logoutRequest, setLogoutRequest] = useState(false);
+    const {Search} = Input;
 
 
     let displayName = "";
@@ -41,11 +46,14 @@ export default function Search({ token }) {
         e.preventDefault();
         setSongList(null);
         setSubmit(true);
-        if (artist.length > 0)
+        if (artist.length > 0){
             fetchSongs(token);
+            //fetchSongsImproved(token);
+        }
     }
 
     const logout = () => {
+        window.localStorage.removeItem("token");
         setLogoutRequest(true);
       }
 
@@ -79,13 +87,93 @@ export default function Search({ token }) {
                                 trackName: songs.items[i].track.name,
                                 albumCover: songs.items[i].track.album.images[1].url,
                                 albumName: songs.items[i].track.album.name};
-                            console.log(songs.items[i].track.name);
+                            //console.log(songs.items[i].track.name);
                             songArr.push(song);
                             songIds.push(songs.items[i].track.external_ids.isrc);
                         }
                     }
                 }
             }
+            let repeat = false;
+            if (songs.items.length === 50) {
+                repeat = true;
+            }
+            while (repeat) {
+                set += 50;
+                const { data: songs } = await axios.get(playlists[t], {
+                    headers: {
+                        Authorization: 'Bearer ' + token
+                    },
+                    params: {
+                        limit: 50,
+                        offset: set
+                    }
+                }).catch(err => {
+                    if(err.message.includes('401')){
+                        logout()
+                    }
+                });
+                for (let i = 0; i < songs.items.length; i++) {
+                    if (songs.items[i].track != null) {
+                        for (let j = 0; j < songs.items[i].track.artists.length; j++) {
+                            if (artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
+                                const song = {id: songs.items[i].track.external_ids.isrc,
+                                    trackName: songs.items[i].track.name,
+                                    albumCover: songs.items[i].track.album.images[1],
+                                    albumName: songs.items[i].track.album.name};
+                                //console.log(songs.items[i].track.name);
+                                songArr.push(song);
+                                songIds.push(songs.items[i].track.external_ids.isrc);
+                            }
+                        }
+                    }
+                }
+
+
+                if (songs.items.length < 50) {
+                    repeat = false;
+                }
+            }
+        }
+        setSongList(songArr);
+    }
+
+    const fetchSongsImproved = async (token) => {
+        if(artist==""){
+            return;
+        }
+        var songArr = [];
+        var songIds = [];
+        //var songArrIndex = 0;
+        var set = 0;
+        for (let t = 0; t < playlists.length; t++) {
+            const { data: songs } = await axios.get(playlists[t], {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                },
+                params: {
+                    limit: 50,
+                    offset: 0
+                }
+            }).catch(err => {
+                if(err.message.includes('401')){
+                    logout()
+                }
+            });
+            let artists  = []
+            for (let i = 0; i < songs.items.length; i++) {
+                if (songs.items[i].track != null) {
+                    songs.items[i].track.artists.forEach(artist => {
+                        artists.push(artist.name.toLowerCase())
+                    })
+                }
+            }
+            if(artists.includes(String(artist.toLowerCase()))){
+                console.log('hi');
+                let index = artists.indexOf(String(artist.toLowerCase()));
+                console.log(songs.items[parseInt(index)]);
+            }
+            /*
             let repeat = false;
             if (songs.items.length === 50) {
                 repeat = true;
@@ -124,10 +212,10 @@ export default function Search({ token }) {
 
                 if (songs.items.length < 50) {
                     repeat = false;
-                }
-            }
+                }*/
+            //}
         }
-        setSongList(songArr);
+        //setSongList(songArr);
     }
 
     const fetchSaved = async (token) => {
@@ -214,19 +302,23 @@ export default function Search({ token }) {
 
 
     return (
-        <div className="search">
+        <div>
             {logoutRequest && (
                 <h2 className="logout">Your token has expired, please logout and re-login.</h2>
             )}
-            <form onSubmit={submitHandler} className="search-wrap">
+            <Row>
+                <Col>
+                <form onSubmit={submitHandler} className="search">
                     <input
                     value={artist}
                     placeholder={"Search Artist"}
-                    className="input-element"
                     onChange={changeHandler}
+                    className="input-element"
                     />
-                    <button type={"submit"} className="search-button">Submit</button>
-            </form>
+                    <button type={"submit"} className="search-button">Submit</button>    
+                </form>
+                </Col>
+            </Row>
             {!songList && submit && !logoutRequest && (
                 <h2 className="retrieve">Retrieving data...</h2>
             )}
@@ -239,3 +331,11 @@ export default function Search({ token }) {
         </div>
     );
 };
+
+/*<Search
+    placeholder = "Search Artist"
+    allowClear
+    enterButton = "Search"
+    size = "large"
+    onSearch = {submitHandler}
+/>*/

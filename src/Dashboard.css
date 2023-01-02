@@ -33,6 +33,7 @@ th{
     padding-right: 20pt;
     font-size: 80%;
     color: #272838;
+    overflow-wrap:break-word;
 }
 .dash-cell-center{
     padding-left:5pt;

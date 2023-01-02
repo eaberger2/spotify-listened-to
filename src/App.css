@@ -24,7 +24,7 @@
 }
 
 .Header {
-  background-color: #F1DCA7;
+  background-color: black;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -36,10 +36,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 .header{
-  color: #FB3754;
+  color: white;
   font-weight: bold;
   font-family: 'Bebas Neue';
-  font-size: 120px;
+  font-size: 100px;
 }
 
 html, body {

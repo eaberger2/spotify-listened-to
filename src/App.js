@@ -20,6 +20,8 @@ function App() {
   const [userId, setUserId] = useState("")
   const [playlist_id, setPlaylistId] = useState("")
   //const [playlists, setPlayLists] = useState("") 
+  const [renderSearch, setRenderSearch] = useState("");
+  const [renderTop, setRenderTop] = useState("");
 
   useEffect(() => {
     const hash = window.location.hash
@@ -37,46 +39,6 @@ function App() {
     setToken("")
     window.localStorage.removeItem("token")
     window.history.replace()
-  }
-
-  /*const getPlaylists = async (e) => {
-    e.preventDefault()
-    const {data} = await axios.get("https://api.spotify.com/v1/users/user_id/playlists", {
-      headers: {
-        Authorization: 'Bearer '+token,
-      }
-    })
-  }*/
-
-  const getPlaylists = async (e) => {
-    e.preventDefault()
-    const { data } = await axios.get("https://api.spotify.com/v1/me/playlists", {
-      headers: {
-        Authorization: 'Bearer ' + token
-      },
-      params: {
-        limit: 50,
-        offset: 0
-      }
-    })
-    console.log({ data })
-    setPlaylistId(data.items[0].id)
-    getTracks()
-    /*e.preventDefault()
-    const {newData} = await axios.get("https://api.spotify.com/v1/playlists/1pSFzybscOUcx4YDTtVzHq/tracks", {
-      headers: {
-        Authorization: 'Bearer '+token
-      },
-      params: {
-        additional_types: "track",
-        fields: "items(track(name,href,album(name,href)))",
-        limit: 50,
-        market: "US",
-        offset: 0
-      }
-    })
-    console.log({newData})
-    */
   }
 
   const getTracks = () => {
@@ -132,6 +94,7 @@ function App() {
       {window.localStorage.getItem("token") && (
         <Search token={token} />
       )}
+
     </div>
   );
 }
