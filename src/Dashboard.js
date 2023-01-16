@@ -12,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { styled } from '@mui/material/styles';
+import { Compare } from "@mui/icons-material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -22,15 +23,22 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
     [`&.${tableCellClasses.body}`]: {
       fontSize: 14,
-      backgroundColor: theme.palette.grey[800],
+      //backgroundColor: theme.palette.grey[800],
       color: theme.palette.common.white,
       border: theme.palette.grey[900],
       fontWeight: theme.typography.fontWeightBold,
+      padding: 10,
     },
   }));
   
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     // hide last border
+    '&:nth-of-type(odd)': {
+        backgroundColor: theme.palette.grey[700],
+    },
+    '&:nth-of-type(even)': {
+        backgroundColor: theme.palette.grey[600],
+    },
     '&:last-child td, &:last-child th': {
       border: 0,
     },
@@ -41,17 +49,25 @@ export default function Dashboard({ songs }) {
     const [photos, setPhotos] = useState();
     const [songNames, setSongNames] = useState();
 
-    var heading = ['Album Cover', 'Song']
-    var body = songs;
-    //console.log({body});
-    const column = Object.keys(body[0]);
-    //console.log({column});
+    var heading = ['Album Cover', 'Song', 'Frequency']
+    var body = sortFreq(songs);
+    //const column = Object.keys(body[0]);
 
-    /*const thData = () =>{
-        return heading.map((data)=>{
-            return <th key={data}>{data}</th>
-        })
-    }*/
+    function compareFreq( a, b ){
+        if(a.frequency < b.frequency){
+            return -1;
+        }
+        if(a.frequency > b.freqeuncy){
+            return 1;
+        }
+        return 0;
+    }
+
+    function sortFreq( songs ){
+        songs.sort((a,b) => b.frequency - a.frequency);
+        return songs;
+    }
+
     const thData = () => {
         return heading.map((data) => {
             return <StyledTableCell key={data}>{data}</StyledTableCell>
@@ -62,28 +78,13 @@ export default function Dashboard({ songs }) {
         return body.map((data)=>{
             return(
                 <StyledTableRow key={data.index} sx={{ '&:last-child td, &:last-child th': {border: 0} }}>
-                    <StyledTableCell><img src={data.albumCover} width="90" height="90"></img></StyledTableCell>
+                    <StyledTableCell><img src={data.albumCover} width="60" height="60"></img></StyledTableCell>
                     <StyledTableCell>{data.trackName}</StyledTableCell>
+                    <StyledTableCell>{data.frequency}</StyledTableCell>
                 </StyledTableRow>
             )
         })
     }
-
-
-    /*const tdData = () => {
-        return body.map((data)=>{
-            return(
-                <tr key={data.index}>
-                    <td className="dash-cell-left"><img src={data.albumCover} width="90" height="90"></img></td>
-                    <td className="dash-cell-right">{data.trackName}</td>
-                </tr>
-            )
-        })
-    }*/
-
-    //useEffect(() => {
-        //getPhoto(token);
-    //}, [])
 
     return (
         <TableContainer component={Paper}>
@@ -98,30 +99,5 @@ export default function Dashboard({ songs }) {
                 </TableBody>
             </Table>
         </TableContainer>
-    )
-
-    {/*return (
-        <TableContainer component={Paper}>
-            <Table sx={{minWidth: 650}} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        {thData()}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {tdData()}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    )*/}
+    );
 };
-
-
-{/*<table className="dashboard">
-            <thead className="dash-heading">
-                <tr>{thData()}</tr>
-            </thead>
-            <tbody>
-                {tdData()}
-            </tbody>
-        </table>*/}

@@ -8,7 +8,7 @@
     border-radius: 5px 0 0 5px;
     outline: none;
     height: 30px;
-    width: 200px;
+    width: 300px;
     font-size: 12px;
     padding: 5px;
     vertical-align: bottom;
@@ -39,8 +39,8 @@
 
 .retrieve{
     font-family: 'Gotham';
-    font-size: 20px;
-    padding: 5pt;
+    font-size: 2vw;
+    padding: 5px;
     font-weight: 100;
     color: lightgray;
     text-transform: lowercase;
@@ -50,9 +50,10 @@
 
 .logout{
     font-family: 'Gotham';
-    font-size: 12px;
-    padding: 5px;
+    font-size: 1vw;
+    padding: 7px;
     font-weight: 100;
-    color: #272838;
+    color: white;
     position: relative;
+    text-align: center;
 }

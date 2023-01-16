@@ -18,8 +18,6 @@ export default function Search({ token }) {
     const [artist, setArtist] = useState("");
     const [songList, setSongList] = useState();
     const [logoutRequest, setLogoutRequest] = useState(false);
-    const {Search} = Input;
-
 
     let displayName = "";
 
@@ -53,6 +51,7 @@ export default function Search({ token }) {
     }
 
     const logout = () => {
+        //window.localStorage.setItem("logout",true);
         window.localStorage.removeItem("token");
         setLogoutRequest(true);
       }
@@ -82,15 +81,23 @@ export default function Search({ token }) {
             for (let i = 0; i < songs.items.length; i++) {
                 if (songs.items[i].track != null) {
                     for (let j = 0; j < songs.items[i].track.artists.length; j++) {
+                        
                         if (artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
                             const song = {id: songs.items[i].track.external_ids.isrc,
                                 trackName: songs.items[i].track.name,
                                 albumCover: songs.items[i].track.album.images[1].url,
-                                albumName: songs.items[i].track.album.name};
+                                albumName: songs.items[i].track.album.name,
+                                frequency: 1};
                             //console.log(songs.items[i].track.name);
                             songArr.push(song);
                             songIds.push(songs.items[i].track.external_ids.isrc);
                         }
+                        else{
+                        if(artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && songIds.includes(songs.items[i].track.external_ids.isrc)){
+                            const oldSong = songArr.find(element => element.id == songs.items[i].track.external_ids.isrc)
+                            oldSong.frequency = oldSong.frequency + 1
+                        }
+                    }
                     }
                 }
             }
@@ -125,62 +132,62 @@ export default function Search({ token }) {
                                 songArr.push(song);
                                 songIds.push(songs.items[i].track.external_ids.isrc);
                             }
+                            else{
+                            if(artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && songIds.includes(songs.items[i].track.external_ids.isrc)){
+                                const oldSong = songArr.find(element => element.id == songs.items[i].track.external_ids.isrc)
+                                oldSong.frequency = oldSong.frequency + 1
+                            }
+                        }
                         }
                     }
                 }
-
-
                 if (songs.items.length < 50) {
                     repeat = false;
                 }
             }
         }
-        setSongList(songArr);
-    }
-
-    const fetchSongsImproved = async (token) => {
-        if(artist==""){
-            return;
+        //Add saved songs
+        const { data: saved } = await axios.get("https://api.spotify.com/v1/me/tracks", {
+            headers: {
+                Authorization: 'Bearer ' + token
+            },
+            params: {
+                limit: 50,
+                offset: 0
+            }
+        }).catch(err => {
+            if(err.message.includes('401')){
+                logout()
+            }
+        });
+        for (let i = 0; i < saved.items.length; i++) {
+            if (saved.items[i].track != null) {
+                for (let j = 0; j < saved.items[i].track.artists.length; j++) {
+                    if (artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(saved.items[i].track.external_ids.isrc)) {
+                        const save = {id: saved.items[i].track.external_ids.isrc,
+                            trackName: saved.items[i].track.name,
+                            albumCover: saved.items[i].track.album.images[1],
+                            albumName: saved.items[i].track.album.name};
+                        //console.log(songs.items[i].track.name);
+                        songArr.push(save);
+                        songIds.push(saved.items[i].track.external_ids.isrc);
+                    }
+                    else{
+                    if(artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && songIds.includes(saved.items[i].track.external_ids.isrc)){
+                        const oldSong = songArr.find(element => element.id == saved.items[i].track.external_ids.isrc)
+                        oldSong.frequency = oldSong.frequency + 1
+                    }
+                }
+                }
+            }
         }
-        var songArr = [];
-        var songIds = [];
-        //var songArrIndex = 0;
-        var set = 0;
-        for (let t = 0; t < playlists.length; t++) {
-            const { data: songs } = await axios.get(playlists[t], {
-                headers: {
-                    Authorization: 'Bearer ' + token
-                },
-                params: {
-                    limit: 50,
-                    offset: 0
-                }
-            }).catch(err => {
-                if(err.message.includes('401')){
-                    logout()
-                }
-            });
-            let artists  = []
-            for (let i = 0; i < songs.items.length; i++) {
-                if (songs.items[i].track != null) {
-                    songs.items[i].track.artists.forEach(artist => {
-                        artists.push(artist.name.toLowerCase())
-                    })
-                }
-            }
-            if(artists.includes(String(artist.toLowerCase()))){
-                console.log('hi');
-                let index = artists.indexOf(String(artist.toLowerCase()));
-                console.log(songs.items[parseInt(index)]);
-            }
-            /*
-            let repeat = false;
-            if (songs.items.length === 50) {
-                repeat = true;
-            }
-            while (repeat) {
-                set += 50;
-                const { data: songs } = await axios.get(playlists[t], {
+        let repeat = false;
+        if (saved.items.length === 50) {
+            repeat= true;
+        }
+        while (repeat) {
+            set += 50;
+                const { data: saved } = await axios.get("https://api.spotify.com/v1/me/tracks", {
                     headers: {
                         Authorization: 'Bearer ' + token
                     },
@@ -193,43 +200,34 @@ export default function Search({ token }) {
                         logout()
                     }
                 });
-                for (let i = 0; i < songs.items.length; i++) {
-                    if (songs.items[i].track != null) {
-                        for (let j = 0; j < songs.items[i].track.artists.length; j++) {
-                            if (artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
-                                const song = {id: songs.items[i].track.external_ids.isrc,
-                                    trackName: songs.items[i].track.name,
-                                    albumCover: songs.items[i].track.album.images[1],
-                                    albumName: songs.items[i].track.album.name};
-                                console.log(songs.items[i].track.name);
-                                songArr.push(song);
-                                songIds.push(songs.items[i].track.external_ids.isrc);
+                for (let i = 0; i < saved.items.length; i++) {
+                    if (saved.items[i].track != null) {
+                        for (let j = 0; j < saved.items[i].track.artists.length; j++) {
+                            if (artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(saved.items[i].track.external_ids.isrc)) {
+                                const save = {id: saved.items[i].track.external_ids.isrc,
+                                    trackName: saved.items[i].track.name,
+                                    albumCover: saved.items[i].track.album.images[1],
+                                    albumName: saved.items[i].track.album.name};
+                                //console.log(songs.items[i].track.name);
+                                songArr.push(save);
+                                songIds.push(saved.items[i].track.external_ids.isrc);
                             }
+                            else{
+                            if(artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && songIds.includes(saved.items[i].track.external_ids.isrc)){
+                                const oldSong = songArr.find(element => element.id == saved.items[i].track.external_ids.isrc)
+                                oldSong.frequency = oldSong.frequency + 1
+                            }
+                        }
                         }
                     }
                 }
-
-
-                if (songs.items.length < 50) {
+                if (saved.items.length < 50) {
                     repeat = false;
-                }*/
-            //}
+                }
         }
-        //setSongList(songArr);
-    }
 
-    const fetchSaved = async (token) => {
-        const { data: saved } = await axios.get("https://api.spotify.com/v1/me/tracks", {
-            headers: {
-                Authorization: 'Bearer ' + token
-            },
-            params: {
-                limit: 50,
-                offset: 0
-            }
-        })
-        console.log(saved);
-    } 
+        setSongList(songArr);
+    }
 
     useEffect(() => {
 
@@ -296,10 +294,7 @@ export default function Search({ token }) {
         getUsername(token);
         if (displayName != null)
             getPlaylists(token);
-        console.log(triggerUseEffect);
-        console.log(playlists);
     }, [triggerUseEffect])
-
 
     return (
         <div>
@@ -331,11 +326,3 @@ export default function Search({ token }) {
         </div>
     );
 };
-
-/*<Search
-    placeholder = "Search Artist"
-    allowClear
-    enterButton = "Search"
-    size = "large"
-    onSearch = {submitHandler}
-/>*/
