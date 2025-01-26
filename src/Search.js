@@ -57,7 +57,7 @@ export default function Search({ token }) {
       }
 
     const fetchSongs = async (token) => {
-        if(artist==""){
+        if(artist== "" || artist == null){
             return;
         }
         var songArr = [];
@@ -81,8 +81,7 @@ export default function Search({ token }) {
             for (let i = 0; i < songs.items.length; i++) {
                 if (songs.items[i].track != null) {
                     for (let j = 0; j < songs.items[i].track.artists.length; j++) {
-                        
-                        if (artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
+                        if (artist?.toLowerCase() == songs.items[i].track.artists[j].name?.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
                             const song = {id: songs.items[i].track.external_ids.isrc,
                                 trackName: songs.items[i].track.name,
                                 albumCover: songs.items[i].track.album.images[1].url,
@@ -93,7 +92,7 @@ export default function Search({ token }) {
                             songIds.push(songs.items[i].track.external_ids.isrc);
                         }
                         else{
-                        if(artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && songIds.includes(songs.items[i].track.external_ids.isrc)){
+                        if(artist?.toLowerCase() == songs.items[i].track.artists[j].name?.toLowerCase() && songIds.includes(songs.items[i].track.external_ids.isrc)){
                             const oldSong = songArr.find(element => element.id == songs.items[i].track.external_ids.isrc)
                             oldSong.frequency = oldSong.frequency + 1
                         }

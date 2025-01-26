@@ -49,7 +49,7 @@ export default function Dashboard({ songs }) {
     const [photos, setPhotos] = useState();
     const [songNames, setSongNames] = useState();
 
-    var heading = ['Album Cover', 'Song', 'Frequency']
+    var heading = ['Album', 'Song', 'Playlist Frequency']
     var body = sortFreq(songs);
     //const column = Object.keys(body[0]);
 
