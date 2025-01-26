@@ -9,7 +9,7 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const CLIENT_ID = "00c7cd96ee6940879762750970dc5863"
-  const REDIRECT_URI = process.env.REDIRECT_URI
+  const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI
   const AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
   const RESPONSE_TYPE = "token"
   const SCOPE = "playlist-read-private user-library-read"
