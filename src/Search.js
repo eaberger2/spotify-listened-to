@@ -77,26 +77,30 @@ export default function Search({ token }) {
                 if(err.message.includes('401')){
                     logout()
                 }
+                if(err.message.incluse('429')){
+                    console.log(err.response);
+                }
             });
             for (let i = 0; i < songs.items.length; i++) {
+                set = 0;
                 if (songs.items[i].track != null) {
                     for (let j = 0; j < songs.items[i].track.artists.length; j++) {
+                        // If song has never been logged before
                         if (artist?.toLowerCase() == songs.items[i].track.artists[j].name?.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
                             const song = {id: songs.items[i].track.external_ids.isrc,
                                 trackName: songs.items[i].track.name,
                                 albumCover: songs.items[i].track.album.images[1].url,
                                 albumName: songs.items[i].track.album.name,
                                 frequency: 1};
-                            //console.log(songs.items[i].track.name);
                             songArr.push(song);
                             songIds.push(songs.items[i].track.external_ids.isrc);
                         }
                         else{
-                        if(artist?.toLowerCase() == songs.items[i].track.artists[j].name?.toLowerCase() && songIds.includes(songs.items[i].track.external_ids.isrc)){
-                            const oldSong = songArr.find(element => element.id == songs.items[i].track.external_ids.isrc)
-                            oldSong.frequency = oldSong.frequency + 1
+                            if(artist?.toLowerCase() == songs.items[i].track.artists[j].name?.toLowerCase() && songIds.includes(songs.items[i].track.external_ids.isrc)){
+                                const oldSong = songArr.find(element => element.id == songs.items[i].track.external_ids.isrc)
+                                oldSong.frequency = oldSong.frequency + 1
+                            }
                         }
-                    }
                     }
                 }
             }
@@ -122,26 +126,30 @@ export default function Search({ token }) {
                 for (let i = 0; i < songs.items.length; i++) {
                     if (songs.items[i].track != null) {
                         for (let j = 0; j < songs.items[i].track.artists.length; j++) {
+                            // If song has never been logged before
                             if (artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(songs.items[i].track.external_ids.isrc)) {
                                 const song = {id: songs.items[i].track.external_ids.isrc,
                                     trackName: songs.items[i].track.name,
                                     albumCover: songs.items[i].track.album.images[1],
-                                    albumName: songs.items[i].track.album.name};
-                                //console.log(songs.items[i].track.name);
+                                    albumName: songs.items[i].track.album.name,
+                                    frequency: 1};
                                 songArr.push(song);
                                 songIds.push(songs.items[i].track.external_ids.isrc);
                             }
                             else{
-                            if(artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && songIds.includes(songs.items[i].track.external_ids.isrc)){
-                                const oldSong = songArr.find(element => element.id == songs.items[i].track.external_ids.isrc)
-                                oldSong.frequency = oldSong.frequency + 1
+                                if(artist.toLowerCase() == songs.items[i].track.artists[j].name.toLowerCase() && songIds.includes(songs.items[i].track.external_ids.isrc)){
+                                    const oldSong = songArr.find(element => element.id == songs.items[i].track.external_ids.isrc)
+                                    oldSong.frequency = oldSong.frequency + 1
+                                }
                             }
-                        }
                         }
                     }
                 }
                 if (songs.items.length < 50) {
                     repeat = false;
+                }
+                else{
+                    sleep(1000);
                 }
             }
         }
@@ -162,21 +170,23 @@ export default function Search({ token }) {
         for (let i = 0; i < saved.items.length; i++) {
             if (saved.items[i].track != null) {
                 for (let j = 0; j < saved.items[i].track.artists.length; j++) {
+                    // If song has never been logged before
                     if (artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(saved.items[i].track.external_ids.isrc)) {
                         const save = {id: saved.items[i].track.external_ids.isrc,
                             trackName: saved.items[i].track.name,
                             albumCover: saved.items[i].track.album.images[1],
-                            albumName: saved.items[i].track.album.name};
-                        //console.log(songs.items[i].track.name);
+                            albumName: saved.items[i].track.album.name,
+                            frequency: 1
+                        };
                         songArr.push(save);
                         songIds.push(saved.items[i].track.external_ids.isrc);
                     }
                     else{
-                    if(artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && songIds.includes(saved.items[i].track.external_ids.isrc)){
-                        const oldSong = songArr.find(element => element.id == saved.items[i].track.external_ids.isrc)
-                        oldSong.frequency = oldSong.frequency + 1
+                        if(artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && songIds.includes(saved.items[i].track.external_ids.isrc)){
+                            const oldSong = songArr.find(element => element.id == saved.items[i].track.external_ids.isrc)
+                            oldSong.frequency = oldSong.frequency + 1
+                        }
                     }
-                }
                 }
             }
         }
@@ -202,27 +212,30 @@ export default function Search({ token }) {
                 for (let i = 0; i < saved.items.length; i++) {
                     if (saved.items[i].track != null) {
                         for (let j = 0; j < saved.items[i].track.artists.length; j++) {
+                            // If song has never been logged before
                             if (artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && !songIds.includes(saved.items[i].track.external_ids.isrc)) {
                                 const save = {id: saved.items[i].track.external_ids.isrc,
                                     trackName: saved.items[i].track.name,
                                     albumCover: saved.items[i].track.album.images[1],
-                                    albumName: saved.items[i].track.album.name};
-                                //console.log(songs.items[i].track.name);
+                                    albumName: saved.items[i].track.album.name,
+                                    frequency: 1
+                                };
                                 songArr.push(save);
                                 songIds.push(saved.items[i].track.external_ids.isrc);
                             }
                             else{
-                            if(artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && songIds.includes(saved.items[i].track.external_ids.isrc)){
-                                const oldSong = songArr.find(element => element.id == saved.items[i].track.external_ids.isrc)
-                                oldSong.frequency = oldSong.frequency + 1
+                                if(artist.toLowerCase() == saved.items[i].track.artists[j].name.toLowerCase() && songIds.includes(saved.items[i].track.external_ids.isrc)){
+                                    const oldSong = songArr.find(element => element.id == saved.items[i].track.external_ids.isrc)
+                                    oldSong.frequency = oldSong.frequency + 1
+                                }
                             }
-                        }
                         }
                     }
                 }
                 if (saved.items.length < 50) {
                     repeat = false;
                 }
+            sleep(1000);
         }
 
         setSongList(songArr);
@@ -282,6 +295,9 @@ export default function Search({ token }) {
                 if (newData.items.length < 50) {
                     repeat = false;
                 }
+                else{
+                    sleep(1000);
+                }
             }
 
             setPlaylists(playlistsArr);
@@ -294,6 +310,10 @@ export default function Search({ token }) {
         if (displayName != null)
             getPlaylists(token);
     }, [triggerUseEffect])
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
     return (
         <div>
